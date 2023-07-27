@@ -1,0 +1,572 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyM5h+Tqi+vVpluvllaeUnLY",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/pedromasi/Chatbot/blob/main/pedrosbot\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!pip install rasa==3.4.5\n",
+        "#versão que encontrei menos erros durante a instalação/execução"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 1000
+        },
+        "id": "KbyMg72O3kN7",
+        "outputId": "a8c69689-50a3-4488-906a-11d97240ba5c"
+      },
+      "execution_count": 3,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Requirement already satisfied: rasa==3.4.5 in /usr/local/lib/python3.10/dist-packages (3.4.5)\n",
+            "Requirement already satisfied: CacheControl<0.13.0,>=0.12.9 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (0.12.14)\n",
+            "Requirement already satisfied: PyJWT[crypto]<3.0.0,>=2.0.0 in /usr/lib/python3/dist-packages (from rasa==3.4.5) (2.3.0)\n",
+            "Requirement already satisfied: SQLAlchemy<1.5.0,>=1.4.0 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (1.4.49)\n",
+            "Requirement already satisfied: absl-py<1.4,>=0.9 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (1.3.0)\n",
+            "Requirement already satisfied: aio-pika<9.0.0,>=6.7.1 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (8.3.0)\n",
+            "Requirement already satisfied: aiogram<2.24 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (2.23.1)\n",
+            "Requirement already satisfied: aiohttp!=3.7.4.post0,<3.9,>=3.6 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (3.8.5)\n",
+            "Requirement already satisfied: apscheduler<3.10,>=3.6 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (3.9.1.post1)\n",
+            "Requirement already satisfied: attrs<22.2,>=19.3 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (22.1.0)\n",
+            "Requirement already satisfied: boto3<2.0,>=1.12 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (1.28.12)\n",
+            "Requirement already satisfied: cloudpickle<2.3,>=1.2 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (2.2.1)\n",
+            "Requirement already satisfied: colorclass<2.3,>=2.2 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (2.2.2)\n",
+            "Requirement already satisfied: coloredlogs<16,>=10 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (15.0.1)\n",
+            "Requirement already satisfied: colorhash<1.3.0,>=1.0.2 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (1.2.1)\n",
+            "Requirement already satisfied: confluent-kafka<2.0.0,>=1.9.2 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (1.9.2)\n",
+            "Requirement already satisfied: dask==2022.10.2 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (2022.10.2)\n",
+            "Requirement already satisfied: fbmessenger<6.1.0,>=6.0.0 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (6.0.0)\n",
+            "Requirement already satisfied: google-auth<3 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (2.17.3)\n",
+            "Requirement already satisfied: joblib<1.3.0,>=0.15.1 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (1.2.0)\n",
+            "Requirement already satisfied: jsonpickle<2.3,>=1.3 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (2.2.0)\n",
+            "Requirement already satisfied: jsonschema<4.17,>=3.2 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (4.3.3)\n",
+            "Requirement already satisfied: matplotlib<3.6,>=3.1 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (3.5.3)\n",
+            "Requirement already satisfied: mattermostwrapper<2.3,>=2.2 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (2.2)\n",
+            "Requirement already satisfied: networkx<2.7,>=2.4 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (2.6.3)\n",
+            "Requirement already satisfied: numpy<1.24.0,>=1.19.2 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (1.22.4)\n",
+            "Requirement already satisfied: packaging<21.0,>=20.0 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (20.9)\n",
+            "Collecting pluggy<2.0.0,>=1.0.0 (from rasa==3.4.5)\n",
+            "  Downloading pluggy-1.2.0-py3-none-any.whl (17 kB)\n",
+            "Collecting prompt-toolkit<3.0.29,>=3.0 (from rasa==3.4.5)\n",
+            "  Using cached prompt_toolkit-3.0.28-py3-none-any.whl (380 kB)\n",
+            "Requirement already satisfied: protobuf<3.20,>=3.9.2 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (3.19.6)\n",
+            "Requirement already satisfied: psycopg2-binary<2.10.0,>=2.8.2 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (2.9.6)\n",
+            "Requirement already satisfied: pydantic<1.10.3 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (1.10.2)\n",
+            "Requirement already satisfied: pydot<1.5,>=1.4 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (1.4.2)\n",
+            "Requirement already satisfied: pykwalify<1.9,>=1.7 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (1.8.0)\n",
+            "Requirement already satisfied: pymongo[srv,tls]<3.11,>=3.8 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (3.10.1)\n",
+            "Requirement already satisfied: python-dateutil<2.9,>=2.8 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (2.8.2)\n",
+            "Requirement already satisfied: python-engineio!=5.0.0,<6,>=4 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (4.5.1)\n",
+            "Requirement already satisfied: python-socketio<6,>=4.4 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (5.8.0)\n",
+            "Requirement already satisfied: pytz<2023.0,>=2019.1 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (2022.7.1)\n",
+            "Requirement already satisfied: questionary<1.11.0,>=1.5.1 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (1.10.0)\n",
+            "Requirement already satisfied: randomname<0.2.0,>=0.1.5 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (0.1.5)\n",
+            "Requirement already satisfied: rasa-sdk<3.5.0,>=3.4.1 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (3.4.1)\n",
+            "Requirement already satisfied: redis<5.0,>=3.4 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (4.6.0)\n",
+            "Requirement already satisfied: regex<2022.11,>=2020.6 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (2022.10.31)\n",
+            "Requirement already satisfied: requests<3.0,>=2.23 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (2.27.1)\n",
+            "Requirement already satisfied: rocketchat_API<1.29.0,>=0.6.31 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (1.28.1)\n",
+            "Requirement already satisfied: ruamel.yaml<0.18.0,>=0.16.5 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (0.17.32)\n",
+            "Requirement already satisfied: sanic<21.13,>=21.12 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (21.12.2)\n",
+            "Requirement already satisfied: sanic-cors<2.1.0,>=2.0.0 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (2.0.1)\n",
+            "Requirement already satisfied: sanic-jwt<2.0.0,>=1.6.0 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (1.8.0)\n",
+            "Requirement already satisfied: sanic-routing<0.8.0,>=0.7.2 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (0.7.2)\n",
+            "Requirement already satisfied: scikit-learn<1.2,>=0.22 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (1.1.3)\n",
+            "Requirement already satisfied: scipy<1.9.0,>=1.4.1 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (1.8.1)\n",
+            "Requirement already satisfied: sentry-sdk<1.12.0,>=0.17.0 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (1.11.1)\n",
+            "Requirement already satisfied: setuptools>=41.0.0 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (67.7.2)\n",
+            "Requirement already satisfied: sklearn-crfsuite<0.4,>=0.3 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (0.3.6)\n",
+            "Requirement already satisfied: slack-sdk<4.0.0,>=3.19.2 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (3.21.3)\n",
+            "Requirement already satisfied: tarsafe<0.0.4,>=0.0.3 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (0.0.3)\n",
+            "Requirement already satisfied: tensorflow<2.9.0,>=2.8.4 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (2.8.4)\n",
+            "Requirement already satisfied: tensorflow-addons<0.18.0,>=0.17.0 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (0.17.1)\n",
+            "Requirement already satisfied: tensorflow-text<2.9.0,>=2.8.0 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (2.8.2)\n",
+            "Requirement already satisfied: tensorflow_hub<0.13.0,>=0.12.0 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (0.12.0)\n",
+            "Requirement already satisfied: terminaltables<3.2.0,>=3.1.0 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (3.1.10)\n",
+            "Requirement already satisfied: tqdm<5.0,>=4.31 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (4.65.0)\n",
+            "Requirement already satisfied: twilio<7.15,>=6.26 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (7.14.2)\n",
+            "Requirement already satisfied: typing-extensions<5.0.0,>=4.1.1 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (4.7.1)\n",
+            "Requirement already satisfied: typing-utils<0.2.0,>=0.1.0 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (0.1.0)\n",
+            "Requirement already satisfied: ujson<6.0,>=1.35 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (5.8.0)\n",
+            "Requirement already satisfied: webexteamssdk<1.7.0,>=1.1.1 in /usr/local/lib/python3.10/dist-packages (from rasa==3.4.5) (1.6.1)\n",
+            "Requirement already satisfied: click>=7.0 in /usr/local/lib/python3.10/dist-packages (from dask==2022.10.2->rasa==3.4.5) (8.1.6)\n",
+            "Requirement already satisfied: fsspec>=0.6.0 in /usr/local/lib/python3.10/dist-packages (from dask==2022.10.2->rasa==3.4.5) (2023.6.0)\n",
+            "Requirement already satisfied: partd>=0.3.10 in /usr/local/lib/python3.10/dist-packages (from dask==2022.10.2->rasa==3.4.5) (1.4.0)\n",
+            "Requirement already satisfied: pyyaml>=5.3.1 in /usr/local/lib/python3.10/dist-packages (from dask==2022.10.2->rasa==3.4.5) (6.0.1)\n",
+            "Requirement already satisfied: toolz>=0.8.2 in /usr/local/lib/python3.10/dist-packages (from dask==2022.10.2->rasa==3.4.5) (0.12.0)\n",
+            "Requirement already satisfied: aiormq~=6.6.3 in /usr/local/lib/python3.10/dist-packages (from aio-pika<9.0.0,>=6.7.1->rasa==3.4.5) (6.6.4)\n",
+            "Requirement already satisfied: yarl in /usr/local/lib/python3.10/dist-packages (from aio-pika<9.0.0,>=6.7.1->rasa==3.4.5) (1.9.2)\n",
+            "Requirement already satisfied: Babel<2.10.0,>=2.9.1 in /usr/local/lib/python3.10/dist-packages (from aiogram<2.24->rasa==3.4.5) (2.9.1)\n",
+            "Requirement already satisfied: certifi>=2021.10.8 in /usr/local/lib/python3.10/dist-packages (from aiogram<2.24->rasa==3.4.5) (2023.7.22)\n",
+            "Requirement already satisfied: magic-filter>=1.0.9 in /usr/local/lib/python3.10/dist-packages (from aiogram<2.24->rasa==3.4.5) (1.0.11)\n",
+            "Requirement already satisfied: charset-normalizer<4.0,>=2.0 in /usr/local/lib/python3.10/dist-packages (from aiohttp!=3.7.4.post0,<3.9,>=3.6->rasa==3.4.5) (2.0.12)\n",
+            "Requirement already satisfied: multidict<7.0,>=4.5 in /usr/local/lib/python3.10/dist-packages (from aiohttp!=3.7.4.post0,<3.9,>=3.6->rasa==3.4.5) (5.2.0)\n",
+            "Requirement already satisfied: async-timeout<5.0,>=4.0.0a3 in /usr/local/lib/python3.10/dist-packages (from aiohttp!=3.7.4.post0,<3.9,>=3.6->rasa==3.4.5) (4.0.2)\n",
+            "Requirement already satisfied: frozenlist>=1.1.1 in /usr/local/lib/python3.10/dist-packages (from aiohttp!=3.7.4.post0,<3.9,>=3.6->rasa==3.4.5) (1.4.0)\n",
+            "Requirement already satisfied: aiosignal>=1.1.2 in /usr/local/lib/python3.10/dist-packages (from aiohttp!=3.7.4.post0,<3.9,>=3.6->rasa==3.4.5) (1.3.1)\n",
+            "Requirement already satisfied: six>=1.4.0 in /usr/local/lib/python3.10/dist-packages (from apscheduler<3.10,>=3.6->rasa==3.4.5) (1.16.0)\n",
+            "Requirement already satisfied: tzlocal!=3.*,>=2.0 in /usr/local/lib/python3.10/dist-packages (from apscheduler<3.10,>=3.6->rasa==3.4.5) (2.1)\n",
+            "Requirement already satisfied: botocore<1.32.0,>=1.31.12 in /usr/local/lib/python3.10/dist-packages (from boto3<2.0,>=1.12->rasa==3.4.5) (1.31.12)\n",
+            "Requirement already satisfied: jmespath<2.0.0,>=0.7.1 in /usr/local/lib/python3.10/dist-packages (from boto3<2.0,>=1.12->rasa==3.4.5) (1.0.1)\n",
+            "Requirement already satisfied: s3transfer<0.7.0,>=0.6.0 in /usr/local/lib/python3.10/dist-packages (from boto3<2.0,>=1.12->rasa==3.4.5) (0.6.1)\n",
+            "Requirement already satisfied: msgpack>=0.5.2 in /usr/local/lib/python3.10/dist-packages (from CacheControl<0.13.0,>=0.12.9->rasa==3.4.5) (1.0.5)\n",
+            "Requirement already satisfied: humanfriendly>=9.1 in /usr/local/lib/python3.10/dist-packages (from coloredlogs<16,>=10->rasa==3.4.5) (10.0)\n",
+            "Requirement already satisfied: cachetools<6.0,>=2.0.0 in /usr/local/lib/python3.10/dist-packages (from google-auth<3->rasa==3.4.5) (5.3.1)\n",
+            "Requirement already satisfied: pyasn1-modules>=0.2.1 in /usr/local/lib/python3.10/dist-packages (from google-auth<3->rasa==3.4.5) (0.3.0)\n",
+            "Requirement already satisfied: rsa<5,>=3.1.4 in /usr/local/lib/python3.10/dist-packages (from google-auth<3->rasa==3.4.5) (4.9)\n",
+            "Requirement already satisfied: pyrsistent!=0.17.0,!=0.17.1,!=0.17.2,>=0.14.0 in /usr/local/lib/python3.10/dist-packages (from jsonschema<4.17,>=3.2->rasa==3.4.5) (0.19.3)\n",
+            "Requirement already satisfied: cycler>=0.10 in /usr/local/lib/python3.10/dist-packages (from matplotlib<3.6,>=3.1->rasa==3.4.5) (0.11.0)\n",
+            "Requirement already satisfied: fonttools>=4.22.0 in /usr/local/lib/python3.10/dist-packages (from matplotlib<3.6,>=3.1->rasa==3.4.5) (4.41.1)\n",
+            "Requirement already satisfied: kiwisolver>=1.0.1 in /usr/local/lib/python3.10/dist-packages (from matplotlib<3.6,>=3.1->rasa==3.4.5) (1.4.4)\n",
+            "Requirement already satisfied: pillow>=6.2.0 in /usr/local/lib/python3.10/dist-packages (from matplotlib<3.6,>=3.1->rasa==3.4.5) (9.4.0)\n",
+            "Requirement already satisfied: pyparsing>=2.2.1 in /usr/local/lib/python3.10/dist-packages (from matplotlib<3.6,>=3.1->rasa==3.4.5) (3.1.0)\n",
+            "Requirement already satisfied: wcwidth in /usr/local/lib/python3.10/dist-packages (from prompt-toolkit<3.0.29,>=3.0->rasa==3.4.5) (0.2.6)\n",
+            "Requirement already satisfied: cryptography>=3.3.1 in /usr/lib/python3/dist-packages (from PyJWT[crypto]<3.0.0,>=2.0.0->rasa==3.4.5) (3.4.8)\n",
+            "Requirement already satisfied: docopt>=0.6.2 in /usr/local/lib/python3.10/dist-packages (from pykwalify<1.9,>=1.7->rasa==3.4.5) (0.6.2)\n",
+            "Requirement already satisfied: dnspython<2.0.0,>=1.16.0 in /usr/local/lib/python3.10/dist-packages (from pymongo[srv,tls]<3.11,>=3.8->rasa==3.4.5) (1.16.0)\n",
+            "Requirement already satisfied: bidict>=0.21.0 in /usr/local/lib/python3.10/dist-packages (from python-socketio<6,>=4.4->rasa==3.4.5) (0.22.1)\n",
+            "Requirement already satisfied: fire in /usr/local/lib/python3.10/dist-packages (from randomname<0.2.0,>=0.1.5->rasa==3.4.5) (0.5.0)\n",
+            "Requirement already satisfied: urllib3<1.27,>=1.21.1 in /usr/local/lib/python3.10/dist-packages (from requests<3.0,>=2.23->rasa==3.4.5) (1.26.16)\n",
+            "Requirement already satisfied: idna<4,>=2.5 in /usr/local/lib/python3.10/dist-packages (from requests<3.0,>=2.23->rasa==3.4.5) (3.4)\n",
+            "Requirement already satisfied: ruamel.yaml.clib>=0.2.7 in /usr/local/lib/python3.10/dist-packages (from ruamel.yaml<0.18.0,>=0.16.5->rasa==3.4.5) (0.2.7)\n",
+            "Requirement already satisfied: httptools>=0.0.10 in /usr/local/lib/python3.10/dist-packages (from sanic<21.13,>=21.12->rasa==3.4.5) (0.6.0)\n",
+            "Requirement already satisfied: aiofiles>=0.6.0 in /usr/local/lib/python3.10/dist-packages (from sanic<21.13,>=21.12->rasa==3.4.5) (23.1.0)\n",
+            "Requirement already satisfied: websockets>=10.0 in /usr/local/lib/python3.10/dist-packages (from sanic<21.13,>=21.12->rasa==3.4.5) (11.0.3)\n",
+            "Requirement already satisfied: uvloop>=0.5.3 in /usr/local/lib/python3.10/dist-packages (from sanic<21.13,>=21.12->rasa==3.4.5) (0.17.0)\n",
+            "Requirement already satisfied: threadpoolctl>=2.0.0 in /usr/local/lib/python3.10/dist-packages (from scikit-learn<1.2,>=0.22->rasa==3.4.5) (3.2.0)\n",
+            "Requirement already satisfied: python-crfsuite>=0.8.3 in /usr/local/lib/python3.10/dist-packages (from sklearn-crfsuite<0.4,>=0.3->rasa==3.4.5) (0.9.9)\n",
+            "Requirement already satisfied: tabulate in /usr/local/lib/python3.10/dist-packages (from sklearn-crfsuite<0.4,>=0.3->rasa==3.4.5) (0.9.0)\n",
+            "Requirement already satisfied: greenlet!=0.4.17 in /usr/local/lib/python3.10/dist-packages (from SQLAlchemy<1.5.0,>=1.4.0->rasa==3.4.5) (2.0.2)\n",
+            "Requirement already satisfied: astunparse>=1.6.0 in /usr/local/lib/python3.10/dist-packages (from tensorflow<2.9.0,>=2.8.4->rasa==3.4.5) (1.6.3)\n",
+            "Requirement already satisfied: flatbuffers>=1.12 in /usr/local/lib/python3.10/dist-packages (from tensorflow<2.9.0,>=2.8.4->rasa==3.4.5) (23.5.26)\n",
+            "Requirement already satisfied: gast>=0.2.1 in /usr/local/lib/python3.10/dist-packages (from tensorflow<2.9.0,>=2.8.4->rasa==3.4.5) (0.4.0)\n",
+            "Requirement already satisfied: google-pasta>=0.1.1 in /usr/local/lib/python3.10/dist-packages (from tensorflow<2.9.0,>=2.8.4->rasa==3.4.5) (0.2.0)\n",
+            "Requirement already satisfied: h5py>=2.9.0 in /usr/local/lib/python3.10/dist-packages (from tensorflow<2.9.0,>=2.8.4->rasa==3.4.5) (3.8.0)\n",
+            "Requirement already satisfied: keras-preprocessing>=1.1.1 in /usr/local/lib/python3.10/dist-packages (from tensorflow<2.9.0,>=2.8.4->rasa==3.4.5) (1.1.2)\n",
+            "Requirement already satisfied: libclang>=9.0.1 in /usr/local/lib/python3.10/dist-packages (from tensorflow<2.9.0,>=2.8.4->rasa==3.4.5) (16.0.6)\n",
+            "Requirement already satisfied: opt-einsum>=2.3.2 in /usr/local/lib/python3.10/dist-packages (from tensorflow<2.9.0,>=2.8.4->rasa==3.4.5) (3.3.0)\n",
+            "Requirement already satisfied: termcolor>=1.1.0 in /usr/local/lib/python3.10/dist-packages (from tensorflow<2.9.0,>=2.8.4->rasa==3.4.5) (2.3.0)\n",
+            "Requirement already satisfied: wrapt>=1.11.0 in /usr/local/lib/python3.10/dist-packages (from tensorflow<2.9.0,>=2.8.4->rasa==3.4.5) (1.14.1)\n",
+            "Requirement already satisfied: tensorboard<2.9,>=2.8 in /usr/local/lib/python3.10/dist-packages (from tensorflow<2.9.0,>=2.8.4->rasa==3.4.5) (2.8.0)\n",
+            "Requirement already satisfied: tensorflow-estimator<2.9,>=2.8 in /usr/local/lib/python3.10/dist-packages (from tensorflow<2.9.0,>=2.8.4->rasa==3.4.5) (2.8.0)\n",
+            "Requirement already satisfied: keras<2.9,>=2.8.0rc0 in /usr/local/lib/python3.10/dist-packages (from tensorflow<2.9.0,>=2.8.4->rasa==3.4.5) (2.8.0)\n",
+            "Requirement already satisfied: tensorflow-io-gcs-filesystem>=0.23.1 in /usr/local/lib/python3.10/dist-packages (from tensorflow<2.9.0,>=2.8.4->rasa==3.4.5) (0.32.0)\n",
+            "Requirement already satisfied: grpcio<2.0,>=1.24.3 in /usr/local/lib/python3.10/dist-packages (from tensorflow<2.9.0,>=2.8.4->rasa==3.4.5) (1.56.2)\n",
+            "Requirement already satisfied: typeguard>=2.7 in /usr/local/lib/python3.10/dist-packages (from tensorflow-addons<0.18.0,>=0.17.0->rasa==3.4.5) (4.0.1)\n",
+            "Requirement already satisfied: future in /usr/local/lib/python3.10/dist-packages (from webexteamssdk<1.7.0,>=1.1.1->rasa==3.4.5) (0.18.3)\n",
+            "Requirement already satisfied: requests-toolbelt in /usr/local/lib/python3.10/dist-packages (from webexteamssdk<1.7.0,>=1.1.1->rasa==3.4.5) (1.0.0)\n",
+            "Requirement already satisfied: pamqp==3.2.1 in /usr/local/lib/python3.10/dist-packages (from aiormq~=6.6.3->aio-pika<9.0.0,>=6.7.1->rasa==3.4.5) (3.2.1)\n",
+            "Requirement already satisfied: wheel<1.0,>=0.23.0 in /usr/local/lib/python3.10/dist-packages (from astunparse>=1.6.0->tensorflow<2.9.0,>=2.8.4->rasa==3.4.5) (0.41.0)\n",
+            "Requirement already satisfied: locket in /usr/local/lib/python3.10/dist-packages (from partd>=0.3.10->dask==2022.10.2->rasa==3.4.5) (1.0.0)\n",
+            "Requirement already satisfied: pyasn1<0.6.0,>=0.4.6 in /usr/local/lib/python3.10/dist-packages (from pyasn1-modules>=0.2.1->google-auth<3->rasa==3.4.5) (0.5.0)\n",
+            "Requirement already satisfied: google-auth-oauthlib<0.5,>=0.4.1 in /usr/local/lib/python3.10/dist-packages (from tensorboard<2.9,>=2.8->tensorflow<2.9.0,>=2.8.4->rasa==3.4.5) (0.4.6)\n",
+            "Requirement already satisfied: markdown>=2.6.8 in /usr/local/lib/python3.10/dist-packages (from tensorboard<2.9,>=2.8->tensorflow<2.9.0,>=2.8.4->rasa==3.4.5) (3.4.3)\n",
+            "Requirement already satisfied: tensorboard-data-server<0.7.0,>=0.6.0 in /usr/local/lib/python3.10/dist-packages (from tensorboard<2.9,>=2.8->tensorflow<2.9.0,>=2.8.4->rasa==3.4.5) (0.6.1)\n",
+            "Requirement already satisfied: tensorboard-plugin-wit>=1.6.0 in /usr/local/lib/python3.10/dist-packages (from tensorboard<2.9,>=2.8->tensorflow<2.9.0,>=2.8.4->rasa==3.4.5) (1.8.1)\n",
+            "Requirement already satisfied: werkzeug>=0.11.15 in /usr/local/lib/python3.10/dist-packages (from tensorboard<2.9,>=2.8->tensorflow<2.9.0,>=2.8.4->rasa==3.4.5) (2.3.6)\n",
+            "Requirement already satisfied: requests-oauthlib>=0.7.0 in /usr/local/lib/python3.10/dist-packages (from google-auth-oauthlib<0.5,>=0.4.1->tensorboard<2.9,>=2.8->tensorflow<2.9.0,>=2.8.4->rasa==3.4.5) (1.3.1)\n",
+            "Requirement already satisfied: MarkupSafe>=2.1.1 in /usr/local/lib/python3.10/dist-packages (from werkzeug>=0.11.15->tensorboard<2.9,>=2.8->tensorflow<2.9.0,>=2.8.4->rasa==3.4.5) (2.1.3)\n",
+            "Requirement already satisfied: oauthlib>=3.0.0 in /usr/local/lib/python3.10/dist-packages (from requests-oauthlib>=0.7.0->google-auth-oauthlib<0.5,>=0.4.1->tensorboard<2.9,>=2.8->tensorflow<2.9.0,>=2.8.4->rasa==3.4.5) (3.2.2)\n",
+            "Installing collected packages: prompt-toolkit, pluggy\n",
+            "  Attempting uninstall: prompt-toolkit\n",
+            "    Found existing installation: prompt-toolkit 3.0.39\n",
+            "    Uninstalling prompt-toolkit-3.0.39:\n",
+            "      Successfully uninstalled prompt-toolkit-3.0.39\n",
+            "  Attempting uninstall: pluggy\n",
+            "    Found existing installation: pluggy 0.6.0\n",
+            "    Uninstalling pluggy-0.6.0:\n",
+            "      Successfully uninstalled pluggy-0.6.0\n",
+            "\u001b[31mERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.\n",
+            "ipython 8.14.0 requires prompt-toolkit!=3.0.37,<3.1.0,>=3.0.30, but you have prompt-toolkit 3.0.28 which is incompatible.\u001b[0m\u001b[31m\n",
+            "\u001b[0mSuccessfully installed pluggy-1.2.0 prompt-toolkit-3.0.28\n"
+          ]
+        },
+        {
+          "output_type": "display_data",
+          "data": {
+            "application/vnd.colab-display-data+json": {
+              "pip_warning": {
+                "packages": [
+                  "prompt_toolkit"
+                ]
+              }
+            }
+          },
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!pip install tzlocal==2.1\n",
+        "#pegar o fuso horario do pc/sistema"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "260ISClt-hR0",
+        "outputId": "3e9cb8ca-47a4-48c9-80a6-68e0f28cc2c7"
+      },
+      "execution_count": 4,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Requirement already satisfied: tzlocal==2.1 in /usr/local/lib/python3.10/dist-packages (2.1)\n",
+            "Requirement already satisfied: pytz in /usr/local/lib/python3.10/dist-packages (from tzlocal==2.1) (2022.7.1)\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!pip install jedi==0.11\n",
+        "!pip install pluggy==0.6\n",
+        "!pip install prompt-toolkit==2.0.10\n",
+        "#ferramentas e biblios para o python"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 987
+        },
+        "id": "yRiTFT35-rRq",
+        "outputId": "4e8bbd4d-8246-4c16-aabb-2561fe8e559b"
+      },
+      "execution_count": 5,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Collecting jedi==0.11\n",
+            "  Using cached jedi-0.11.0-py2.py3-none-any.whl (146 kB)\n",
+            "Collecting parso==0.1.0 (from jedi==0.11)\n",
+            "  Using cached parso-0.1.0-py2.py3-none-any.whl (89 kB)\n",
+            "Installing collected packages: parso, jedi\n",
+            "  Attempting uninstall: parso\n",
+            "    Found existing installation: parso 0.8.3\n",
+            "    Uninstalling parso-0.8.3:\n",
+            "      Successfully uninstalled parso-0.8.3\n",
+            "  Attempting uninstall: jedi\n",
+            "    Found existing installation: jedi 0.18.2\n",
+            "    Uninstalling jedi-0.18.2:\n",
+            "      Successfully uninstalled jedi-0.18.2\n",
+            "\u001b[31mERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.\n",
+            "ipython 8.14.0 requires jedi>=0.16, but you have jedi 0.11.0 which is incompatible.\n",
+            "ipython 8.14.0 requires prompt-toolkit!=3.0.37,<3.1.0,>=3.0.30, but you have prompt-toolkit 3.0.28 which is incompatible.\u001b[0m\u001b[31m\n",
+            "\u001b[0mSuccessfully installed jedi-0.11.0 parso-0.1.0\n"
+          ]
+        },
+        {
+          "output_type": "display_data",
+          "data": {
+            "application/vnd.colab-display-data+json": {
+              "pip_warning": {
+                "packages": [
+                  "jedi",
+                  "parso"
+                ]
+              }
+            }
+          },
+          "metadata": {}
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Collecting pluggy==0.6\n",
+            "  Using cached pluggy-0.6.0-py3-none-any.whl (13 kB)\n",
+            "Installing collected packages: pluggy\n",
+            "  Attempting uninstall: pluggy\n",
+            "    Found existing installation: pluggy 1.2.0\n",
+            "    Uninstalling pluggy-1.2.0:\n",
+            "      Successfully uninstalled pluggy-1.2.0\n",
+            "\u001b[31mERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.\n",
+            "pytest 7.2.2 requires pluggy<2.0,>=0.12, but you have pluggy 0.6.0 which is incompatible.\n",
+            "rasa 3.4.5 requires pluggy<2.0.0,>=1.0.0, but you have pluggy 0.6.0 which is incompatible.\u001b[0m\u001b[31m\n",
+            "\u001b[0mSuccessfully installed pluggy-0.6.0\n",
+            "Collecting prompt-toolkit==2.0.10\n",
+            "  Using cached prompt_toolkit-2.0.10-py3-none-any.whl (340 kB)\n",
+            "Requirement already satisfied: six>=1.9.0 in /usr/local/lib/python3.10/dist-packages (from prompt-toolkit==2.0.10) (1.16.0)\n",
+            "Requirement already satisfied: wcwidth in /usr/local/lib/python3.10/dist-packages (from prompt-toolkit==2.0.10) (0.2.6)\n",
+            "Installing collected packages: prompt-toolkit\n",
+            "  Attempting uninstall: prompt-toolkit\n",
+            "    Found existing installation: prompt-toolkit 3.0.28\n",
+            "    Uninstalling prompt-toolkit-3.0.28:\n",
+            "      Successfully uninstalled prompt-toolkit-3.0.28\n",
+            "\u001b[31mERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.\n",
+            "ipython 8.14.0 requires jedi>=0.16, but you have jedi 0.11.0 which is incompatible.\n",
+            "ipython 8.14.0 requires prompt-toolkit!=3.0.37,<3.1.0,>=3.0.30, but you have prompt-toolkit 2.0.10 which is incompatible.\n",
+            "rasa 3.4.5 requires pluggy<2.0.0,>=1.0.0, but you have pluggy 0.6.0 which is incompatible.\n",
+            "rasa 3.4.5 requires prompt-toolkit<3.0.29,>=3.0, but you have prompt-toolkit 2.0.10 which is incompatible.\n",
+            "rasa-sdk 3.4.1 requires prompt-toolkit<3.0.29,>=3.0, but you have prompt-toolkit 2.0.10 which is incompatible.\u001b[0m\u001b[31m\n",
+            "\u001b[0mSuccessfully installed prompt-toolkit-2.0.10\n"
+          ]
+        },
+        {
+          "output_type": "display_data",
+          "data": {
+            "application/vnd.colab-display-data+json": {
+              "pip_warning": {
+                "packages": [
+                  "prompt_toolkit"
+                ]
+              }
+            }
+          },
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!pip install -U ipython"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 816
+        },
+        "id": "xroYXgRU_Pyf",
+        "outputId": "1f57756e-08d1-4be2-da3e-b9af5439ad9a"
+      },
+      "execution_count": 6,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Requirement already satisfied: ipython in /usr/local/lib/python3.10/dist-packages (8.14.0)\n",
+            "Requirement already satisfied: backcall in /usr/local/lib/python3.10/dist-packages (from ipython) (0.2.0)\n",
+            "Requirement already satisfied: decorator in /usr/local/lib/python3.10/dist-packages (from ipython) (4.4.2)\n",
+            "Collecting jedi>=0.16 (from ipython)\n",
+            "  Using cached jedi-0.18.2-py2.py3-none-any.whl (1.6 MB)\n",
+            "Requirement already satisfied: matplotlib-inline in /usr/local/lib/python3.10/dist-packages (from ipython) (0.1.6)\n",
+            "Requirement already satisfied: pickleshare in /usr/local/lib/python3.10/dist-packages (from ipython) (0.7.5)\n",
+            "Collecting prompt-toolkit!=3.0.37,<3.1.0,>=3.0.30 (from ipython)\n",
+            "  Using cached prompt_toolkit-3.0.39-py3-none-any.whl (385 kB)\n",
+            "Requirement already satisfied: pygments>=2.4.0 in /usr/local/lib/python3.10/dist-packages (from ipython) (2.14.0)\n",
+            "Requirement already satisfied: stack-data in /usr/local/lib/python3.10/dist-packages (from ipython) (0.6.2)\n",
+            "Requirement already satisfied: traitlets>=5 in /usr/local/lib/python3.10/dist-packages (from ipython) (5.7.1)\n",
+            "Requirement already satisfied: pexpect>4.3 in /usr/local/lib/python3.10/dist-packages (from ipython) (4.8.0)\n",
+            "Collecting parso<0.9.0,>=0.8.0 (from jedi>=0.16->ipython)\n",
+            "  Using cached parso-0.8.3-py2.py3-none-any.whl (100 kB)\n",
+            "Requirement already satisfied: ptyprocess>=0.5 in /usr/local/lib/python3.10/dist-packages (from pexpect>4.3->ipython) (0.7.0)\n",
+            "Requirement already satisfied: wcwidth in /usr/local/lib/python3.10/dist-packages (from prompt-toolkit!=3.0.37,<3.1.0,>=3.0.30->ipython) (0.2.6)\n",
+            "Requirement already satisfied: executing>=1.2.0 in /usr/local/lib/python3.10/dist-packages (from stack-data->ipython) (1.2.0)\n",
+            "Requirement already satisfied: asttokens>=2.1.0 in /usr/local/lib/python3.10/dist-packages (from stack-data->ipython) (2.2.1)\n",
+            "Requirement already satisfied: pure-eval in /usr/local/lib/python3.10/dist-packages (from stack-data->ipython) (0.2.2)\n",
+            "Requirement already satisfied: six in /usr/local/lib/python3.10/dist-packages (from asttokens>=2.1.0->stack-data->ipython) (1.16.0)\n",
+            "Installing collected packages: prompt-toolkit, parso, jedi\n",
+            "  Attempting uninstall: prompt-toolkit\n",
+            "    Found existing installation: prompt-toolkit 2.0.10\n",
+            "    Uninstalling prompt-toolkit-2.0.10:\n",
+            "      Successfully uninstalled prompt-toolkit-2.0.10\n",
+            "  Attempting uninstall: parso\n",
+            "    Found existing installation: parso 0.1.0\n",
+            "    Uninstalling parso-0.1.0:\n",
+            "      Successfully uninstalled parso-0.1.0\n",
+            "  Attempting uninstall: jedi\n",
+            "    Found existing installation: jedi 0.11.0\n",
+            "    Uninstalling jedi-0.11.0:\n",
+            "      Successfully uninstalled jedi-0.11.0\n",
+            "\u001b[31mERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.\n",
+            "rasa 3.4.5 requires pluggy<2.0.0,>=1.0.0, but you have pluggy 0.6.0 which is incompatible.\n",
+            "rasa 3.4.5 requires prompt-toolkit<3.0.29,>=3.0, but you have prompt-toolkit 3.0.39 which is incompatible.\n",
+            "rasa-sdk 3.4.1 requires prompt-toolkit<3.0.29,>=3.0, but you have prompt-toolkit 3.0.39 which is incompatible.\u001b[0m\u001b[31m\n",
+            "\u001b[0mSuccessfully installed jedi-0.18.2 parso-0.8.3 prompt-toolkit-3.0.39\n"
+          ]
+        },
+        {
+          "output_type": "display_data",
+          "data": {
+            "application/vnd.colab-display-data+json": {
+              "pip_warning": {
+                "packages": [
+                  "jedi",
+                  "parso",
+                  "prompt_toolkit"
+                ]
+              }
+            }
+          },
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!python -m spacy download en_core_web_sm\n",
+        "#baixando modelo de treinamento, spacy é uma biblioteca usada para NLP"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "vdvTLkph7QIp",
+        "outputId": "b841fef6-0cf4-4c73-a592-d1c0809bae93"
+      },
+      "execution_count": 7,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "2023-07-27 15:26:32.865075: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /usr/local/nvidia/lib:/usr/local/nvidia/lib64\n",
+            "2023-07-27 15:26:32.865155: W tensorflow/stream_executor/cuda/cuda_driver.cc:269] failed call to cuInit: UNKNOWN ERROR (303)\n",
+            "Collecting en-core-web-sm==3.5.0\n",
+            "  Downloading https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.5.0/en_core_web_sm-3.5.0-py3-none-any.whl (12.8 MB)\n",
+            "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m12.8/12.8 MB\u001b[0m \u001b[31m31.2 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hRequirement already satisfied: spacy<3.6.0,>=3.5.0 in /usr/local/lib/python3.10/dist-packages (from en-core-web-sm==3.5.0) (3.5.4)\n",
+            "Requirement already satisfied: spacy-legacy<3.1.0,>=3.0.11 in /usr/local/lib/python3.10/dist-packages (from spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (3.0.12)\n",
+            "Requirement already satisfied: spacy-loggers<2.0.0,>=1.0.0 in /usr/local/lib/python3.10/dist-packages (from spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (1.0.4)\n",
+            "Requirement already satisfied: murmurhash<1.1.0,>=0.28.0 in /usr/local/lib/python3.10/dist-packages (from spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (1.0.9)\n",
+            "Requirement already satisfied: cymem<2.1.0,>=2.0.2 in /usr/local/lib/python3.10/dist-packages (from spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (2.0.7)\n",
+            "Requirement already satisfied: preshed<3.1.0,>=3.0.2 in /usr/local/lib/python3.10/dist-packages (from spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (3.0.8)\n",
+            "Requirement already satisfied: thinc<8.2.0,>=8.1.8 in /usr/local/lib/python3.10/dist-packages (from spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (8.1.10)\n",
+            "Requirement already satisfied: wasabi<1.2.0,>=0.9.1 in /usr/local/lib/python3.10/dist-packages (from spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (1.1.2)\n",
+            "Requirement already satisfied: srsly<3.0.0,>=2.4.3 in /usr/local/lib/python3.10/dist-packages (from spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (2.4.7)\n",
+            "Requirement already satisfied: catalogue<2.1.0,>=2.0.6 in /usr/local/lib/python3.10/dist-packages (from spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (2.0.9)\n",
+            "Requirement already satisfied: typer<0.10.0,>=0.3.0 in /usr/local/lib/python3.10/dist-packages (from spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (0.9.0)\n",
+            "Requirement already satisfied: pathy>=0.10.0 in /usr/local/lib/python3.10/dist-packages (from spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (0.10.2)\n",
+            "Requirement already satisfied: smart-open<7.0.0,>=5.2.1 in /usr/local/lib/python3.10/dist-packages (from spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (6.3.0)\n",
+            "Requirement already satisfied: tqdm<5.0.0,>=4.38.0 in /usr/local/lib/python3.10/dist-packages (from spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (4.65.0)\n",
+            "Requirement already satisfied: numpy>=1.15.0 in /usr/local/lib/python3.10/dist-packages (from spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (1.22.4)\n",
+            "Requirement already satisfied: requests<3.0.0,>=2.13.0 in /usr/local/lib/python3.10/dist-packages (from spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (2.27.1)\n",
+            "Requirement already satisfied: pydantic!=1.8,!=1.8.1,<1.11.0,>=1.7.4 in /usr/local/lib/python3.10/dist-packages (from spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (1.10.2)\n",
+            "Requirement already satisfied: jinja2 in /usr/local/lib/python3.10/dist-packages (from spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (3.1.2)\n",
+            "Requirement already satisfied: setuptools in /usr/local/lib/python3.10/dist-packages (from spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (67.7.2)\n",
+            "Requirement already satisfied: packaging>=20.0 in /usr/local/lib/python3.10/dist-packages (from spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (20.9)\n",
+            "Requirement already satisfied: langcodes<4.0.0,>=3.2.0 in /usr/local/lib/python3.10/dist-packages (from spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (3.3.0)\n",
+            "Requirement already satisfied: pyparsing>=2.0.2 in /usr/local/lib/python3.10/dist-packages (from packaging>=20.0->spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (3.1.0)\n",
+            "Requirement already satisfied: typing-extensions>=4.1.0 in /usr/local/lib/python3.10/dist-packages (from pydantic!=1.8,!=1.8.1,<1.11.0,>=1.7.4->spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (4.7.1)\n",
+            "Requirement already satisfied: urllib3<1.27,>=1.21.1 in /usr/local/lib/python3.10/dist-packages (from requests<3.0.0,>=2.13.0->spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (1.26.16)\n",
+            "Requirement already satisfied: certifi>=2017.4.17 in /usr/local/lib/python3.10/dist-packages (from requests<3.0.0,>=2.13.0->spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (2023.7.22)\n",
+            "Requirement already satisfied: charset-normalizer~=2.0.0 in /usr/local/lib/python3.10/dist-packages (from requests<3.0.0,>=2.13.0->spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (2.0.12)\n",
+            "Requirement already satisfied: idna<4,>=2.5 in /usr/local/lib/python3.10/dist-packages (from requests<3.0.0,>=2.13.0->spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (3.4)\n",
+            "Requirement already satisfied: blis<0.8.0,>=0.7.8 in /usr/local/lib/python3.10/dist-packages (from thinc<8.2.0,>=8.1.8->spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (0.7.10)\n",
+            "Requirement already satisfied: confection<1.0.0,>=0.0.1 in /usr/local/lib/python3.10/dist-packages (from thinc<8.2.0,>=8.1.8->spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (0.1.0)\n",
+            "Requirement already satisfied: click<9.0.0,>=7.1.1 in /usr/local/lib/python3.10/dist-packages (from typer<0.10.0,>=0.3.0->spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (8.1.6)\n",
+            "Requirement already satisfied: MarkupSafe>=2.0 in /usr/local/lib/python3.10/dist-packages (from jinja2->spacy<3.6.0,>=3.5.0->en-core-web-sm==3.5.0) (2.1.3)\n",
+            "\u001b[38;5;2m✔ Download and installation successful\u001b[0m\n",
+            "You can now load the package via spacy.load('en_core_web_sm')\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!pip install nest_asyncio\n",
+        "#permite uso de eventos assincronos"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "57gqIoej8KnD",
+        "outputId": "a446488e-b002-4f74-a449-3f9d56bba3e3"
+      },
+      "execution_count": 8,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Requirement already satisfied: nest_asyncio in /usr/local/lib/python3.10/dist-packages (1.5.6)\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "#Instalação dos pacotes necessários OK\n",
+        "#imports necessários e criando o bot"
+      ],
+      "metadata": {
+        "id": "4ZbvzAy577Pi"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import os\n",
+        "import rasa\n",
+        "import nest_asyncio\n",
+        "\n",
+        "nest_asyncio.apply()\n",
+        "#pra rodar o rasa em modo assincrono\n",
+        "print(\"aplicado assincrono\")"
+      ],
+      "metadata": {
+        "id": "AiE0T7CaNkKz",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "93c987f5-6c4d-4166-eb52-e15f0faf3bfb"
+      },
+      "execution_count": 9,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "aplicado assincrono\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from rasa.cli.scaffold import create_initial_project\n",
+        "project = 'pedrosbot'\n",
+        "create_initial_project(project)"
+      ],
+      "metadata": {
+        "id": "YmxAnAzjN0sN"
+      },
+      "execution_count": 10,
+      "outputs": []
+    }
+  ]
+}
