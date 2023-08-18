@@ -11,6 +11,13 @@ h3_elements = soup.find_all('h3')
 dfs = 'Depth First Search:'
 bfs = 'Breadth First Search:'
 
+def translate(url):
+    navegador = webdriver.Firefox()
+    navegador.get(url)
+
+
+
+
 
 def depth(text):
     for i in h3_elements:
@@ -22,7 +29,7 @@ def breadth(text):
         if(i.text == bfs):
             print(i.next_sibling.text)
 
-
+translate(url)
 depth(dfs)
 print()
 breadth(bfs)
