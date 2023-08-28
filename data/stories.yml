@@ -1,0 +1,61 @@
+version: "3.1"
+
+stories:
+
+  - story: exemplo
+    steps:
+    - intent: saudacao
+    - action: utter_saudacao
+    - action: utter_intro
+    - action: utter_escolha
+    - intent: despedida
+    - action: utter_despedida
+
+  - story: escolha_conceitos_bfs
+    steps:
+    - intent: conceito
+    - action: utter_conceito
+    - action: utter_escolha_lista
+    - action: utter_escolha_conceito
+    - intent: largura
+    - action: bfs_concept
+    - action: img_bfsExample
+    - action: bfs_form
+    - active_loop: bfs_form
+    - action: utter_escolha_depoisexemplo
+
+  - story: escolha_conceitos_dfs
+    steps:
+    - intent: conceito
+    - action: utter_conceito
+    - action: utter_escolha_lista
+    - action: utter_escolha_conceito
+    - intent: profundidade
+    - action: dfs_concept
+    - action: img_dfsExample
+    - action: dfs_form
+    - active_loop: dfs_form
+    - action: utter_escolha_depoisexemplo
+
+  - story: escolha_conceitos_h
+    steps:
+    - intent: conceito
+    - action: utter_conceito
+    - action: utter_escolha_lista
+    - action: utter_escolha_conceito
+    - intent: heuristica
+    - action: h_concept
+    - action: greedy_concept
+    - action: img_HExample
+    - action: h_form
+    - active_loop: h_form
+    - action: utter_escolha_depoisexemplo
+
+  - story: escolha_exercicios
+    steps:
+    - intent: saudacao
+    - action: utter_saudacao
+    - action: utter_intro
+    - action: utter_escolha
+    - intent: exercicio
+    - action: utter_exercicio_escolha

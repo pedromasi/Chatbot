@@ -1,0 +1,23 @@
+version: "3.1"
+
+rules:
+
+- rule: Dar tchau toda vez que o usuario dar tchau
+  steps:
+  - intent: despedida
+  - action: utter_despedida
+
+- rule: Responder o que é sempre que for perguntado
+  steps:
+  - intent: intro
+  - action: utter_intro
+
+- rule: Pedir para reformular sempre que a msg for de baixa confiança do NLU
+  steps:
+  - intent: nlu_fallback
+  - action: utter_nao_entendi
+
+- rule: Sempre que falar não
+  steps:
+  = intent: negar
+  = action: utter_tabem

@@ -1,0 +1,118 @@
+version: "3.1"
+
+intents:
+  - saudacao
+  - despedida
+  - intro
+  - negar
+  - afirmar
+  - agradecer
+  - conceito
+  - exercicio
+  - largura
+  - profundidade
+  - heuristica
+
+
+responses:
+  utter_saudacao:
+  - text: "Olá, seja bem-vindo, espero que esteja tudo bem contigo!"
+  - text: "Oi, tudo bem? que bom que você veio falar comigo!"
+
+  utter_despedida:
+  - text: "Até mais! Espero que eu tenha te ajudado."
+  - text: "Muito Obrigado, sucesso na sua caminhada!"
+
+  utter_intro:
+  - text: "Sou o chatbot que vai te auxiliar a respeito de alguns tipos de algoritmos de busca."
+  - text: "Sou um chatbot que pode te ensinar conceitos sobre busca e também aplicar exercicios sobre essa área"
+
+  utter_negar:
+  - text: "Ok, posso te ajudar em algo mais?"
+
+  utter_escolha:
+  - text: "Deseja aprender sobre buscas ou realizar exercicios sobre esse assunto?"
+
+  utter_conceito:
+  - text: "Os algoritmos de busca formam a base de inúmeras sub-areas da IA. De forma resumida, um algoritmo de busca a partir de um determinado problema, lista todas possiveis soluções e algumas vezes garante que uma dessas soluções seja alcançada."
+
+  utter_exercicio_escolha:
+  - text: "Sobre qual tipo de busca deseja realizar exericios?"
+
+  utter_escolha_conceito:
+  - text: "Qual que você quer aprender mais?"
+
+  utter_escolha_lista:
+  - text: "Posso te ensinar sobre esses 3 tipos: Profundidade, largura e heuristica"
+
+  utter_nao_entendi:
+  - text: "Me desculpe, não entendi isso, pode reformular para mim?"
+
+  utter_default:
+  - text: "Eu não entendi isso, digite novamente"
+
+  utter_heuristica:
+  - text: "Esse tipo de busca é chamada de busca informada, os algoritmos possuem informações sobre o estado objetivo, o que ajuda na busca mais eficiente. Esta informação é obtida por algo chamado heurística."
+
+  utter_define_heuristica:
+  - text: "Em uma busca informada, uma heurística é uma função que estima o quão próximo um estado está do estado objetivo. Por exemplo – distância de Manhattan, distância euclidiana, etc. (menor a distância, mais próximo o objetivo). Diferentes heurísticas são usadas em diferentes algoritmos informados."
+
+  utter_escolha_depoisexemplo:
+  - text: "Muito bem, o que deseja fazer agora, ver algum outro conceito ou realizar mais exercicios?"
+
+  utter_tabem:
+  - text: "Ok, ta bem"
+
+actions:
+  - dfs_concept
+  - bfs_concept
+  - h_concept
+  - greedy_concept
+  - img_dfsExample
+  - img_bfsExample
+  - img_HExample
+  - validate_dfs_form
+  - validate_bfs_form
+  - validate_h_form
+
+slots:
+  dfs:
+    type: text
+    mappings:
+    - type: from_text
+      conditions:
+      - active_loop: dfs_form
+        requested_slot: dfs
+
+  bfs:
+    type: text
+    mappings:
+    - type: from_text
+      conditions:
+      - active_loop: bfs_form
+        requested_slot: bfs
+
+  h:
+    type: text
+    mappings:
+    - type: from_text
+      conditions:
+      - active_loop: h_form
+        requested_slot: h
+
+forms:
+  dfs_form:
+    required_slots:
+    - dfs
+
+  bfs_form:
+    required_slots:
+    - bfs
+
+  h_form:
+    required_slots:
+    = h
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true

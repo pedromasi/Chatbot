@@ -1,0 +1,88 @@
+version: "3.1"
+
+nlu:
+- intent: saudacao
+  examples: |
+    - oi
+    - oii
+    - ola
+    - eai
+    - eae
+    - salve
+    - bom dia
+    - boa tarde
+    - boa noite
+    - fala comigo
+
+- intent: despedida
+  examples: |
+    - tchau
+    - ate mais
+    - falou
+    - fui
+    - bye
+    - goodbye
+    - flw
+
+- intent: intro
+  examples: |
+    - o que voce é?
+    - para o que voce serve?
+    - voce é um bot?
+    - qual a sua utilidade?
+
+- intent: conceito
+  examples: |
+    - conceito
+    - conceitos
+    - quero aprender sobre buscas
+    - o que voce pode me ensinar?
+
+- intent: exercicio
+  examples: |
+    - exercicio
+    - exercicios
+    - quero fazer exercicios
+    - quiz
+    - testes
+
+- intent: agradecer
+  examples: |
+    - valeu
+    - obrigado
+    - obg
+    - vlw
+    - gracias
+    - thx
+
+- intent: afirmar
+  examples: |
+    - sim
+    - claro
+    - pode ser
+    - yes
+    - s
+    - aham
+
+- intent: negar
+  examples: |
+    - não
+    - na
+    - n
+    - nops
+
+#types
+- intent: largura
+  examples: |
+    - largura
+    - busca em largura
+
+- intent: profundidade
+  examples: |
+    - profundidade
+    - busca em profundidade
+
+- intent: heuristica
+  examples: |
+    - heuristica
+    - busca heuristica
